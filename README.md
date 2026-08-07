@@ -123,4 +123,4 @@ If you use this in academic work, please cite the accompanying paper:
 
 ## License
 
-MIT
+Apache-2.0
