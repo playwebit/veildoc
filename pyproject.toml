@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "veildoc"
+version = "0.1.0"
+description = "A client-side, minimal-disclosure privacy pipeline for using AI on sensitive documents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Priyanshu Chauhan" },
+    { name = "Renu Dalal" },
+]
+keywords = ["privacy", "llm", "redaction", "rag", "retrieval", "nlp"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "pymupdf>=1.23",
+    "presidio-analyzer>=2.2",
+    "presidio-anonymizer>=2.2",
+    "spacy>=3.7",
+]
+
+[project.optional-dependencies]
+local-embeddings = ["sentence-transformers>=2.5"]
+anthropic = ["anthropic>=0.40"]
+openai = ["openai>=1.50"]
+gemini = ["google-genai>=0.1"]
+ollama = ["requests>=2.31"]
+all = [
+    "sentence-transformers>=2.5",
+    "anthropic>=0.40",
+    "openai>=1.50",
+    "google-genai>=0.1",
+    "requests>=2.31",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+[project.urls]
+Repository = "https://github.com/YOUR-USERNAME/veildoc"
+Paper = "https://your-paper-doi-here"
+
+[project.scripts]
+veildoc = "veildoc.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["veildoc*"]
