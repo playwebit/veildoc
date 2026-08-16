@@ -40,3 +40,17 @@ def test_chunks_preserve_order():
     assert chunks[0].startswith("Alpha")
     assert chunks[1].startswith("Beta")
     assert chunks[2].startswith("Gamma")
+
+
+def test_max_len_is_a_hard_cap_even_for_run_on_sentences():
+    # regression test: a single "sentence" (no clean period+capital boundary,
+    # e.g. due to abbreviations like "et al.") longer than max_len must still
+    # be split, not passed through oversized. Found via real-world testing
+    # on an academic PDF where citation-heavy prose exceeded max_len as one
+    # sentence-boundary-detector "sentence".
+    long_sentence = ("This method builds on prior work by Smith et al. and Jones et al., " * 15).strip()
+    assert len(long_sentence) > 900
+
+    chunks = chunk_text(long_sentence, min_len=10, max_len=900)
+    assert len(chunks) > 1
+    assert all(len(c) <= 900 for c in chunks), "max_len must be a hard cap"
