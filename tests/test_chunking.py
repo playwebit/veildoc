@@ -54,3 +54,21 @@ def test_max_len_is_a_hard_cap_even_for_run_on_sentences():
     chunks = chunk_text(long_sentence, min_len=10, max_len=900)
     assert len(chunks) > 1
     assert all(len(c) <= 900 for c in chunks), "max_len must be a hard cap"
+
+
+def test_no_off_by_one_at_the_join_boundary():
+    # regression test: found via real-world testing on an academic PDF where
+    # a chunk came out at exactly max_len + 1 (901 instead of <=900). The bug:
+    # the old check `len(buf) + len(sentence) <= max_len` didn't account for
+    # the joining space added when concatenating buf + " " + sentence, so a
+    # buf/sentence pair summing to exactly max_len produced a max_len+1 result.
+    # This specific construction (two sentences summing to exactly 900) was
+    # verified against the old buggy logic to reproduce a 901-length chunk.
+    s1 = "Alpha " + ("x" * 439) + "."   # 446 chars
+    s2 = "Beta " + ("y" * 448) + "."    # 454 chars -- 446 + 454 = 900 exactly
+    text = s1 + " " + s2 + " Gamma next sentence follows here."
+
+    chunks = chunk_text(text, min_len=10, max_len=900)
+    assert all(len(c) <= 900 for c in chunks), (
+        f"off-by-one regression: max chunk length {max(len(c) for c in chunks)} exceeds 900"
+    )
