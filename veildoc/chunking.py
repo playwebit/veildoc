@@ -74,8 +74,9 @@ def chunk_text(text: str, min_len: int = 40, max_len: int = 900) -> list[str]:
         sentences = _SENTENCE_SPLIT.split(chunk)
         buf = ""
         for sentence in sentences:
-            if len(buf) + len(sentence) <= max_len:
-                buf = (buf + " " + sentence).strip()
+            candidate = (buf + " " + sentence).strip() if buf else sentence
+            if len(candidate) <= max_len:
+                buf = candidate
             else:
                 if buf:
                     final_chunks.append(buf)
